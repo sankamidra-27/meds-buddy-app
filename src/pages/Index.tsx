@@ -1,14 +1,16 @@
-
 import { useState } from "react";
 import Onboarding from "@/components/Onboarding";
 import PatientDashboard from "@/components/PatientDashboard";
 import CaretakerDashboard from "@/components/CaretakerDashboard";
+import Signup from "@/components/Signup";
+import Login from "@/components/login";
+import { LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Users, User } from "lucide-react";
 
 type UserType = "patient" | "caretaker" | null;
 
 const Index = () => {
+  const [authPage, setAuthPage] = useState<"signup" | "login">("signup");
   const [userType, setUserType] = useState<UserType>(null);
   const [isOnboarded, setIsOnboarded] = useState(false);
 
@@ -17,13 +19,46 @@ const Index = () => {
     setIsOnboarded(true);
   };
 
-  const switchUserType = () => {
-    const newType = userType === "patient" ? "caretaker" : "patient";
-    setUserType(newType);
+  const handleLogin = (role: string) => {
+    setUserType(role === "patient" ? "patient" : "caretaker");
+    setIsOnboarded(true);
   };
 
-  if (!isOnboarded) {
-    return <Onboarding onComplete={handleOnboardingComplete} />;
+  if (!userType || !isOnboarded) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-500 to-green-500 flex flex-col items-center justify-center px-4">
+        <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
+          {authPage === "signup" ? (
+            <Signup onSignupSuccess={() => setAuthPage("login")} />
+          ) : (
+            <Login onLoginSuccess={handleLogin} />
+          )}
+          <p className="text-center text-sm text-gray-600 mt-4">
+            {authPage === "signup" ? (
+              <>
+                Already have an account?{" "}
+                <button
+                  onClick={() => setAuthPage("login")}
+                  className="text-blue-600 underline hover:text-blue-800 font-semibold"
+                >
+                  Login
+                </button>
+              </>
+            ) : (
+              <>
+                Don’t have an account?{" "}
+                <button
+                  onClick={() => setAuthPage("signup")}
+                  className="text-blue-600 underline hover:text-blue-800 font-semibold"
+                >
+                  Sign up
+                </button>
+              </>
+            )}
+          </p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -35,20 +70,26 @@ const Index = () => {
               <span className="text-white font-bold text-lg">M</span>
             </div>
             <div>
-              <h1 className="text-xl font-bold text-foreground">MediCare Companion</h1>
+              <h1 className="text-xl font-bold text-foreground">
+                MediCare Companion
+              </h1>
               <p className="text-sm text-muted-foreground">
                 {userType === "patient" ? "Patient View" : "Caretaker View"}
               </p>
             </div>
           </div>
-          
-          <Button 
-            variant="outline" 
-            onClick={switchUserType}
-            className="flex items-center gap-2 hover:bg-accent transition-colors"
+
+          <Button
+            variant="outline"
+            onClick={() => {
+              setUserType(null);
+              setIsOnboarded(false);
+              localStorage.removeItem("token");
+            }}
+            className="flex items-center gap-2 hover:bg-gray-100 transition-colors"
           >
-            {userType === "patient" ? <Users className="w-4 h-4" /> : <User className="w-4 h-4" />}
-            Switch to {userType === "patient" ? "Caretaker" : "Patient"}
+            <LogOut className="w-4 h-4" />
+            Logout
           </Button>
         </div>
       </header>
