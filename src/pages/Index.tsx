@@ -3,7 +3,7 @@ import Onboarding from "@/components/Onboarding";
 import PatientDashboard from "@/components/PatientDashboard";
 import CaretakerDashboard from "@/components/CaretakerDashboard";
 import Signup from "@/components/Signup";
-import Login from "@/components/login";
+import Login from "@/components/Login";
 import { LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
